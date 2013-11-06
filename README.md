@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Libsvm-androidjni -- LIBSVM for android jni environment
 
     SVM is a machine learning and classification algorithm, LIBSVM is a popular free implementation of it, 
@@ -97,3 +98,8 @@
 [http://www.csie.ntu.edu.tw/~cjlin/libsvm/](http://www.csie.ntu.edu.tw/~cjlin/libsvm/)
 
 [http://ntu.csie.org/~piaip/svm/svm_tutorial.html#](LIBSVM tutorial)
+=======
+Hi~
+My name is Deron Yang.
+I'm learning to use GIT.
+>>>>>>> f435ffb21ae106416bdb838fec858baf161e24ea

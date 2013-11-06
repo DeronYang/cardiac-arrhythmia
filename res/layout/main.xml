@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <info.kunli.androidlibsvmexample.SampleView
+        android:id="@+id/sampleview"
+        android:layout_width="1280px"
+        android:layout_height="440px" />
+
+    <LinearLayout
+        android:paddingTop="50px"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:paddingRight="30px"
+            android:id="@+id/last"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Last 5 waves" />
+
+        <EditText
+            android:paddingRight="30px"
+            android:id="@+id/edittext"
+            android:layout_width="400px"
+            android:layout_height="wrap_content" >
+        </EditText>
+
+        <Button
+            android:paddingRight="30px"
+            android:id="@+id/go" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Go" >
+        </Button>
+
+        <Button
+            android:paddingRight="30px"
+            android:id="@+id/next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Next 5 waves" />
+    </LinearLayout>
+	<TextView
+	    android:paddingTop="30px"
+	    android:id="@+id/tv"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"></TextView>	
+   
+
+</LinearLayout>

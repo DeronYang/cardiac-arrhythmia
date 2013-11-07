@@ -11,7 +11,7 @@
 struct svm_node *x;
 int max_nr_attr = 64;
 
-struct svm_model* model;
+static struct svm_model* model;
 
 static char *line = NULL;
 static int max_line_len;
@@ -38,76 +38,30 @@ void exit_input_error_predict(int line_num) {
 }
 
 
-int predict3(int beg, int end, int *labels,double *prob_estimates)
+int predict(int beg, int end, int *labels,double *prob_estimates)
 {
 
 	int width = 12;
 	int len = end - beg + 1;
-//	struct svm_model *model = svm_load_model("/mnt/sdcard/ECG/model.dat");
 	struct svm_test_data *test_data = svm_load_test_data(
-			"/mnt/sdcard/ECG/SVM2/TestData105.dat", beg, end, width);
+			"/mnt/sdcard/ECG/TestData105.dat", beg, end, width);
 	struct svm_result *groundtruth = svm_load_result(
-			"/mnt/sdcard/ECG/SVM2/groundtruth105.dat", beg, end);
-//	struct svm_result *group = svm_load_result(
-//				"/mnt/sdcard/group.dat", begin, end);
-
-	int *my_labels = (int*) malloc(sizeof(int) * len);
+			"/mnt/sdcard/ECG/groundtruth105.dat", beg, end);
 	LOGD("My Result2");
 	int nright = 0, nwrong = 0;
 
-//	FILE *fp = fopen("/mnt/sdcard/correct", "w");
-//	if (fp == NULL)
-//		return -1;
-
 	for (int i = 0; i < len; i++) {
-		my_labels[i] = my_svm_predict(model, test_data->data[i]);
-		labels[i] = my_labels[i];
-		LOGD("%d    %d     %d",i+1,my_labels[i],groundtruth->result[i]);
-//		fprintf(fp,"%d\n",my_labels[i]);
-		if (groundtruth->result[i] == my_labels[i]) {
-//			fprintf(fp,"%d\n",i+1);
+		labels[i] = my_svm_predict(model, test_data->data[i]);
+		LOGD("%d    %d     %d",i+1,labels[i],groundtruth->result[i]);
+		if (groundtruth->result[i] == labels[i]) {
 			nright++;
 		} else {
-//			LOGD("%d  truth: %d   my_labels: %d", i, groundtruth->result[i], my_labels[i]);
 			nwrong++;
 		}
 	}
-
-
-//	if (ferror(fp) != 0 || fclose(fp) != 0)
-//		return -1;
-
-//	LOGD("Right: %d", nright);
-//	LOGD("Wrong: %d", nwrong);
 	double ratio = (double) nright / (nright + nwrong);
 	LOGD("Ratio: %g", ratio);
-//	LOGD("My Result2");
-//	int nright = 0, nwrong = 0;
-//	for (int i = 0; i < len; i++) {
-////		my_labels[i] = my_svm_predict(model, x);
-//		if (groundtruth->result[i] == group->result[i]) {
-//			nright++;
-//		} else {
-//			nwrong++;
-//		}
-//	}
-//	LOGD("Right: %d", nright);
-//	LOGD("Wrong: %d", nwrong);
-//	double ratio = (double) nright / (nright + nwrong);
-//	LOGD("Ratio: %g", ratio);
-//	LOGD("My Result3");
-//	nright = 0, nwrong = 0;
-//	for (int i = 0; i < len; i++) {
-//		if (group->result[i] == my_labels[i]) {
-//			nright++;
-//		} else {
-//			nwrong++;
-//		}
-//	}
-//	LOGD("Right: %d", nright);
-//	LOGD("Wrong: %d", nwrong);
-//	ratio = (double) nright / (nright + nwrong);
-//	LOGD("Ratio: %g", ratio);
+
 	return 0;
 }
 
@@ -131,14 +85,8 @@ int svmpredict(int beg, int end,
 			exit(1);
 		}
 	}
-	x = (struct svm_node *) malloc(max_nr_attr * sizeof(struct svm_node));
 
-	if (svm_check_probability_model(model) != 0)
-	    LOGD("Model supports probability estimates, but disabled in prediction.\n");
-
-	int r = predict3(beg, end,labels, prob_estimates);
-	svm_free_and_destroy_model(&model);
-	free(x);
-	free(line);
+	int r = predict(beg, end,labels, prob_estimates);
+//	svm_free_and_destroy_model(&model);
 	return r;
 }

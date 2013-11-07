@@ -11,7 +11,7 @@ import android.util.Log;
 import android.view.View;
 
 public class SampleView extends View {
-	private int mHeight = 400;
+	private int mHeight = 440;
 	private int mWidth = 1280;
 	private float[] pointArray;
 	float fStartX = 40.0f;
@@ -43,7 +43,7 @@ public class SampleView extends View {
 		super.onDraw(canvas);
 
 		fStartX = 40;
-		fEndX = 1240;
+		fEndX = 1140;
 		canvas.drawColor(Color.WHITE);// Çå³ý±³¾°
 		// TODO: handle exception
 
@@ -54,7 +54,7 @@ public class SampleView extends View {
 			canvas.drawLine(fStartX, fStartY + 20 * yy, fEndX, fStartY + 20
 					* yy, mPaint);
 		}
-		for (int xx = 0; xx < 61; xx++) {
+		for (int xx = 0; xx < 56; xx++) {
 			canvas.drawLine(fStartX + xx * 20, fStartY, fStartX + xx * 20,
 					fEndY, mPaint);
 		}
@@ -64,7 +64,7 @@ public class SampleView extends View {
 			canvas.drawLine(fStartX, fStartY + 100 * yy, fEndX, fStartY + 100
 					* yy, mPaint);
 		}
-		for (int xx = 0; xx < 13; xx++) {
+		for (int xx = 0; xx < 12; xx++) {
 			canvas.drawLine(fStartX + xx * 100, fStartY, fStartX + xx * 100,
 					fEndY, mPaint);
 		}

@@ -2310,9 +2310,11 @@ double svm_predict_values(const svm_model *model, const svm_node *x,
 int my_svm_predict_values(const svm_model *model, const svm_node *x,
 		double* dec_values) {
 	int i;
+	//if-->not in my use.
 	if (model->param.svm_type == ONE_CLASS
 			|| model->param.svm_type == EPSILON_SVR
 			|| model->param.svm_type == NU_SVR) {
+
 		double *sv_coef = model->sv_coef[0];
 		double sum = 0;
 		for (i = 0; i < model->l; i++)
@@ -2326,9 +2328,10 @@ int my_svm_predict_values(const svm_model *model, const svm_node *x,
 		else
 			return sum;
 	} else {
+
 		int nr_class = model->nr_class;
 		int l = model->l;
-
+		LOGD("kvalue:%d\n",l);
 		double *kvalue = Malloc(double,l);
 		for (i = 0; i < l; i++)
 		{
@@ -2343,8 +2346,7 @@ int my_svm_predict_values(const svm_model *model, const svm_node *x,
 		int *vote = Malloc(int,nr_class);
 		for (i = 0; i < nr_class; i++)
 			vote[i] = 0;
-//		LOGD("vote[0]: %d",vote[0]);
-//		LOGD("vote[1]: %d",vote[1]);
+
 		int p = 0;
 		double sum;
 		for (i = 0; i < nr_class; i++)
@@ -2363,13 +2365,13 @@ int my_svm_predict_values(const svm_model *model, const svm_node *x,
 				for(k = 0; k < model->nSV[0] + model->nSV[1]; k++)
 				{
 					sum1 += coef1[si + k] * kvalue[si + k];
-//					LOGD("Alpha[%d]:  %g",k,coef1[si+k]);
+					LOGD("Alpha[%d]:  %g",k,coef1[si+k]);
 				}
 				for (k = 0; k < ci; k++)
 					sum += coef1[si + k] * kvalue[si + k];
 				for (k = 0; k < cj; k++)
 					sum += coef2[sj + k] * kvalue[sj + k];
-//				LOGD("sum:  %g   sum1:  %g",sum,sum1);
+				LOGD("sum:  %g   sum1:  %g",sum,sum1);
 				sum += model->rho[p];// - gai +
 
 				dec_values[p] = sum;
@@ -2380,12 +2382,12 @@ int my_svm_predict_values(const svm_model *model, const svm_node *x,
 					++vote[j];
 				p++;
 			}
-
+				LOGD("vote[0]: %d",vote[0]);
+				LOGD("vote[1]: %d",vote[1]);
 		int vote_max_idx = 0;
 		for (i = 1; i < nr_class; i++)
 			if (vote[i] > vote[vote_max_idx])
 				vote_max_idx = i;
-//		LOGD("sum: %g   label: %d",sum,model->label[vote_max_idx]);
 
 		free(kvalue);
 		free(start);

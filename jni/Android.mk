@@ -20,16 +20,14 @@ LOCAL_C_INCLUDES += $(JNI_H_INCLUDE)
 LOCAL_SRC_FILES := \
     jni/onload.cpp \
     jni/cardiographclassfication.cpp \
-    src/train.cpp \
     src/predict.cpp \
-    src/svm/svm-train.cpp \
     src/svm/svm-predict.cpp \
     src/svm/svm.cpp
 
 LOCAL_NDK_VERSION := 4
 LOCAL_SDK_VERSION := 10
 
-LOCAL_MODULE    := libsignal
+LOCAL_MODULE    := libclassify
 LOCAL_LDLIBS := -llog
 
 include $(BUILD_SHARED_LIBRARY)

@@ -4,13 +4,13 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <info.kunli.androidlibsvmexample.SampleView
+    <edu.tju.seie.cardiographclassification.SampleView
         android:id="@+id/sampleview"
         android:layout_width="1280px"
         android:layout_height="440px" />
 
     <LinearLayout
-        android:paddingTop="50px"
+        android:paddingTop="5px"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
@@ -45,7 +45,7 @@
             android:text="Next 5 waves" />
     </LinearLayout>
 	<TextView
-	    android:paddingTop="30px"
+	    android:paddingTop="5px"
 	    android:id="@+id/tv"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"></TextView>	

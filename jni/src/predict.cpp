@@ -10,5 +10,5 @@
 
 int predict(int beg, int end, int *labels, double* prob_estimates,const char *modelFile) {
     LOGD("Coming into classification2\n");
-    return svmpredict(beg, end,  labels, prob_estimates, const char *modelFile);
+    return svmpredict(beg, end,  labels, prob_estimates, modelFile);
 }

@@ -2,7 +2,6 @@
 #include <string.h>
 #include "../src/log.h"
 #include "../src/predict.h"
-#include "../src/train.h"
 
 namespace example {
 

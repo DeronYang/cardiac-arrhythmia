@@ -1,0 +1,3 @@
+% load ecg.log
+% a = ecg(:,2);
+% len = length(a);

@@ -1,0 +1,3 @@
+clear;clc;
+load samp_pre.mat;
+

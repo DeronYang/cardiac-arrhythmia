@@ -20,9 +20,10 @@ LOCAL_C_INCLUDES += $(JNI_H_INCLUDE)
 LOCAL_SRC_FILES := \
     jni/onload.cpp \
     jni/cardiographclassfication.cpp \
-    src/predict.cpp \
+    src/svm/predict.cpp \
     src/svm/svm-predict.cpp \
-    src/svm/svm.cpp
+    src/svm/svm.cpp \
+    src/extract/median.cpp 
 
 LOCAL_NDK_VERSION := 4
 LOCAL_SDK_VERSION := 10

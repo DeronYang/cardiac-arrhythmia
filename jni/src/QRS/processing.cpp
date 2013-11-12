@@ -13,8 +13,8 @@ int main() {
     }
 
     fclose(fid);
-    double *median_flt_samp_200ms = medianFilter(orig_samp, LENGTH, 2);
-    for ( i = 0; i < LENGTH; i++) {
+    double *median_flt_samp_200ms = medfilt1(orig_samp, LENGTH, 4);
+    for ( int i = 0; i < LENGTH; i++) {
         printf("%d : %f\n", i, median_flt_samp_200ms[i]);
     }
 //    double *median_flt_samp_600ms = medianFilter(median_flt_samp_200ms, LENGTH,

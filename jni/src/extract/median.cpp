@@ -1,9 +1,11 @@
 #include "median.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 double median(double *window, int nWinLength);
 void   qsort(double *data, int n);
 
+//used in extract_Wu.m
 double *medianFilter(double *input, int nInLength, int nRadius)
 {
 	double *output;
@@ -28,6 +30,34 @@ double *medianFilter(double *input, int nInLength, int nRadius)
 	free(window);
 	return output;
 }
+// matlab lib function
+double *medfilt1(double *x, int xLen, int n)
+{
+	if(x == NULL || xLen <= 0 || n <=0)
+		return NULL;
+	int m = n >> 1;
+
+	double *y = (double *)malloc(sizeof(double) * xLen);
+	double *window = (double *)malloc(sizeof(double) * n);
+	for(int i = 0; i < xLen; i++)
+	{
+		printf("%d : ",i);
+		for(int j = 0; j < n; j++)
+		{
+			int index = i + j - m;
+			if(index < 0 || index > xLen - 1)
+				window[j] = 0;
+			else
+				window[j] = x[index];
+			printf("%f ",window[j]);
+		}
+		printf("\n");
+
+		y[i] = median(window, n);
+	}
+	return y;
+}
+
 
 double median(double *window, int nWinLength)
 {
@@ -83,3 +113,5 @@ void qsort(double *data, int n)
 	if(index < n - 1)
 		qsort(data + index + 1, n - index -1);
 }
+
+

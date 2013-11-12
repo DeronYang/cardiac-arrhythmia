@@ -83,10 +83,3 @@ void qsort(double *data, int n)
 	if(index < n - 1)
 		qsort(data + index + 1, n - index -1);
 }
-#define N 10
-int main()
-{
-	double data[N] = {2.1, 2.3, 1.4, 2.2, 2.7, 3.1, 3.2, 1.5, 1.6,2.9};
-	qsort(data, N);
-	return 0;
-}

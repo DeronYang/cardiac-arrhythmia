@@ -1,5 +1,7 @@
-load F:\学习资料\课题文档\NextStep\file_01.mat
+clear;clc;
+load file_01.mat
 orig_samp = samp(1:7200);
+save orig_samp.mat orig_samp
 orig_points = length(orig_samp);
 median_flt_samp_200ms = medfilt1(orig_samp, 72);
 median_flt_samp_600ms = medfilt1(median_flt_samp_200ms, 216);

@@ -41,7 +41,7 @@ double *medfilt1(double *x, int xLen, int n)
 	double *window = (double *)malloc(sizeof(double) * n);
 	for(int i = 0; i < xLen; i++)
 	{
-		printf("%d : ",i);
+
 		for(int j = 0; j < n; j++)
 		{
 			int index = i + j - m;
@@ -49,9 +49,8 @@ double *medfilt1(double *x, int xLen, int n)
 				window[j] = 0;
 			else
 				window[j] = x[index];
-			printf("%f ",window[j]);
+
 		}
-		printf("\n");
 
 		y[i] = median(window, n);
 	}

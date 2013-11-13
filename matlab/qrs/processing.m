@@ -22,6 +22,7 @@ pre_data = pre_data';
 
 % load R position And caculate RR-interval
 orig_posi = pos(1:2067);
+save orig_posi.mat orig_posi
 rr_interval = zeros(1,2067);
 for i=1:2066
     rr_interval(1,i) = (orig_posi(1,i+1)-orig_posi(1,i))/360;
@@ -29,7 +30,7 @@ end
 
 % load label text 
 orig_label = label(1:2067);
-
+save orig_label.mat orig_label
 % R wave detection（R波检测代码，离散小波变换）
 % [orig_r_posi,orig_r_height] = QRSDetector(pre_data(10:1080));
 % subplot(2,1,2);plot(pre_data);hold on;plot(orig_r_posi,orig_r_height,'rp');title('R波峰检测'); 
@@ -41,7 +42,7 @@ signal=pre_data;
 %算小波系数和尺度系数
 for i=1:points-3
   swa(1,i+3)=1/4*signal(i+3-2^0*0)+3/4*signal(i+3-2^0*1)+3/4*signal(i+3-2^0*2)+1/4*signal(i+3-2^0*3);
-   swd(1,i+3)=-1/4*signal(i+3-2^0*0)-3/4*signal(i+3-2^0*1)+3/4*signal(i+3-2^0*2)+1/4*signal(i+3-2^0*3);
+  swd(1,i+3)=-1/4*signal(i+3-2^0*0)-3/4*signal(i+3-2^0*1)+3/4*signal(i+3-2^0*2)+1/4*signal(i+3-2^0*3);
 end
 j=2;
 while j<=level

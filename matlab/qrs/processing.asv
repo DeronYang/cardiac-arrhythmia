@@ -1,10 +1,13 @@
-load F:\学习资料\课题文档\NextStep\file_01.mat
+clear;clc;
+load file_01.mat
 orig_samp = samp(1:7200);
+save orig_samp.mat orig_samp
+orig_points = length(orig_samp);
 median_flt_samp_200ms = medfilt1(orig_samp, 72);
 median_flt_samp_600ms = medfilt1(median_flt_samp_200ms, 216);
 Diff_samp = orig_samp-median_flt_samp_600ms;
 % plot(Diff_samp, 'DisplayName', 'Diff_samp', 'YDataSource', 'Diff_samp'); figure(gcf)
-t= 0:1079;
+t= 0:orig_points-1;
 % plot(t, Diff_samp,t,orig_samp)
 fs=360;
 lp=35;
@@ -19,6 +22,7 @@ pre_data = pre_data';
 
 % load R position And caculate RR-interval
 orig_posi = pos(1:2067);
+save orig_posi.mat orig_posi
 rr_interval = zeros(1,2067);
 for i=1:2066
     rr_interval(1,i) = (orig_posi(1,i+1)-orig_posi(1,i))/360;
@@ -26,19 +30,19 @@ end
 
 % load label text 
 orig_label = label(1:2067);
-
-% R wave detection 
+save orig_label.mat orig_label
+% R wave detection（R波检测代码，离散小波变换）
 % [orig_r_posi,orig_r_height] = QRSDetector(pre_data(10:1080));
 % subplot(2,1,2);plot(pre_data);hold on;plot(orig_r_posi,orig_r_height,'rp');title('R波峰检测'); 
 
-points=4320;   level=4;    sr=360; 
+points=length(pre_data);   level=4;    sr=360; 
 swa=zeros(4,points);
 swd=zeros(4,points);
 signal=pre_data;
 %算小波系数和尺度系数
 for i=1:points-3
   swa(1,i+3)=1/4*signal(i+3-2^0*0)+3/4*signal(i+3-2^0*1)+3/4*signal(i+3-2^0*2)+1/4*signal(i+3-2^0*3);
-   swd(1,i+3)=-1/4*signal(i+3-2^0*0)-3/4*signal(i+3-2^0*1)+3/4*signal(i+3-2^0*2)+1/4*signal(i+3-2^0*3);
+  swd(1,i+3)=-1/4*signal(i+3-2^0*0)-3/4*signal(i+3-2^0*1)+3/4*signal(i+3-2^0*2)+1/4*signal(i+3-2^0*3);
 end
 j=2;
 while j<=level
@@ -55,10 +59,10 @@ title('ECG信号及其在j=1,2,3,4尺度下的尺度系数及小波系数');
 for i=1:level
     subplot(level+1,2,2*(i)+1);
     plot(swa(i,:)); axis tight;grid on;xlabel('time');
-    ylabel(strcat('a   ',num2str(i)));
+    ylabel(strcat('a ',num2str(i)));
     subplot(level+1,2,2*(i)+2);
     plot(swd(i,:)); axis tight;grid on;
-    ylabel(strcat('d   ',num2str(i)));
+    ylabel(strcat('d ',num2str(i)));
 end
 
 %画出原图及小波系数
@@ -162,28 +166,7 @@ while i<points
        mark3= round((abs(Mj4(mark2))*mark1+mark2*abs(Mj4(mark1)))/(abs(Mj4(mark2))+abs(Mj4(mark1))));
 %R波极大值点
        R_result(j)=mark3-10;
-       count(mark3-10)=1;
-%求出QRS波起点
-       kqs=mark3-10;
-       markq=0;
-     while (kqs>1)&&( markq< 3)
-         if Mj1(kqs)~=0
-            markq=markq+1;
-         end
-         kqs= kqs -1;
-     end
-  count2(kqs)=-1;
-  
-%求出QRS波终点  
-  kqs=mark3-10;
-  marks=0;
-  while (kqs<points)&&( marks<2)
-      if Mj1(kqs)~=0
-         marks=marks+1;
-      end
-      kqs= kqs+1;
-  end
-  count3(kqs)=-1;
+       count(mark3-10)=300;
   i=i+60;
   j=j+1;
   Rnum=Rnum+1;
@@ -254,7 +237,7 @@ for i=2:length(R)
             mark5=j;
 %求过零点
             mark6= round((abs(Mjadjust(mark5))*mark4+mark5*abs(Mjadjust(mark4)))/(abs(Mjadjust(mark5))+abs(Mjadjust(mark4))));
-            count(R(i-1)+80+mark6-10)=1;
+            count(R(i-1)+80+mark6-10)=400;
             j=j+60;
          end
          j=j+1;
@@ -268,8 +251,6 @@ plot(pre_data(1:points)),grid on,axis tight,axis([1,points,-100,400]);
 title('ECG信号的R波峰值及QRS波波段');
 hold on
 plot(count,'r');
-plot(count2,'k');
-plot(count3,'k');
 for i=1:Rnum
     if R_result(i)==0;
         break
@@ -277,4 +258,3 @@ for i=1:Rnum
     plot(R_result(i),pre_data(R_result(i)),'bo','MarkerSize',10,'MarkerEdgeColor','g');
 end
 hold off
-

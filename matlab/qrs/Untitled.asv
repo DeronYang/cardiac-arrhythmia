@@ -1,6 +1,0 @@
-load orig_samp
-fid = fopen('orig_samp.log','w');
-samp_length = length(orig_samp);
-for i=1:samp_length
-    
-end

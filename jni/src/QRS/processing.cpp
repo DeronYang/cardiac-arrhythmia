@@ -78,39 +78,29 @@ int main() {
     	swa[0][j+3] =  0.25 * signal[j+3] + 0.75 * signal[j+2] + 0.75 * signal[j+1] + 0.25 * signal[j];
     	swd[0][j+3] = -0.25 * signal[j+3] - 0.75 * signal[j+2] + 0.75 * signal[j+1] + 0.25 * signal[j];
     }
-    /*
-     * while j<=level
-   for i=1:points-24
-     swa(j,i+24)= 1/4*swa(j-1,i+24-2^(j-1)*0)+3/4*swa(j-1,i+24-2^(j-1)*1)+3/4*swa(j-1,i+24-2^(j-1)*2)+1/4*swa(j-1,i+24-2^(j-1)*3);
-     swd(j,i+24)=-1/4*swa(j-1,i+24-2^(j-1)*0)-3/4*swa(j-1,i+24-2^(j-1)*1)+3/4*swa(j-1,i+24-2^(j-1)*2)+1/4*swa(j-1,i+24-2^(j-1)*3);
-   end
-   j=j+1;
-end
-     */
-//    int exp2 = 1;
-//    for(int i = 1; i < 2; i++)
-//    {
-//    	exp2 *= 2;
-//    	for(int j = 0; j < points - 24; j++)
-//    	{
-//    		swa[i][j+24] =  0.25 * swa[i-1][j+24] + 0.75 * swa[i-1][j+24-exp2] + 0.75 * swa[i-1][j+24-exp2*2] + 0.75 * swa[i-1][j+24-exp2*3];
-//    		swd[i][j+24] = -0.25 * swa[i-1][j+24] - 0.75 * swa[i-1][j+24-exp2] + 0.75 * swa[i-1][j+24-exp2*2] + 0.75 * swa[i-1][j+24-exp2*3];
-//    		printf("(%d,%d) %f\n",i+1,j+25, swa[i][j+24]);
-//    	}
-//    }
-    int i = 1;
-    int j = 0;
-    int exp2 = 2;
-    printf("swa[0][24] : %f\n", swa[0][24]);
-    printf("swa[0][22] : %f\n", swa[0][22]);
-    printf("swa[0][20] : %f\n", swa[0][20]);
-    printf("swa[0][18] : %f\n", swa[0][18]);
-    swa[i][j+24] =  0.25 * swa[i-1][j+24] + 0.75 * swa[i-1][j+24-exp2] + 0.75 * swa[i-1][j+24-exp2*2] + 0.75 * swa[i-1][j+24-exp2*3];
 
+    int exp2 = 1;
+    for(int i = 1; i < level; i++)
+    {
+    	exp2 *= 2;
+    	for(int j = 0; j < points - 24; j++)
+    	{
+    		swa[i][j+24] =  0.25 * swa[i-1][j+24] + 0.75 * swa[i-1][j+24-exp2] + 0.75 * swa[i-1][j+24-exp2*2] + 0.25 * swa[i-1][j+24-exp2*3];
+    		swd[i][j+24] = -0.25 * swa[i-1][j+24] - 0.75 * swa[i-1][j+24-exp2] + 0.75 * swa[i-1][j+24-exp2*2] + 0.25 * swa[i-1][j+24-exp2*3];
+//    		printf("(%d,%d) %f\n",i+1,j+25, swd[i][j+24]);
+    	}
+    }
 
+    char *pdw = (char *)malloc((points-1) * sizeof(char));
+    memset(pdw, 0, (points - 1) * sizeof(char));
+    int i=0;
+    for(int j = 1; j<points;j++)
+    {
+    	if(swd[i][j] > 0 && swd[i][j] > swd[i][j-1])
+    	{
+    		pdw[j-1] = 1;
+    	}
+    }
 
-
-    //swa[1][24] = 0.25 * swa[0][24] + 0.75 * swa[0][22] + 0.75 * swa[0][20] + 0.25 * swa[0][18];
-    printf("swa[1][24] : %f\n", swa[1][24]);
     return 0;
 }

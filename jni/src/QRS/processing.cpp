@@ -6,6 +6,7 @@
 #define POSI_LENGTH 2067
 #define SAMP_FREQUENCY 360
 int main() {
+
 	int i, j;
 	const char *fp_samp_path = "./orig_samp.log";
     FILE *fid = fopen(fp_samp_path, "rb");
@@ -115,6 +116,7 @@ int main() {
     	}
 
     }
+
     char *&ndw = pdw;
     char **nddw = (char **)malloc(level * sizeof(char *));
     for(i = 0; i < level; i++)
@@ -139,6 +141,7 @@ int main() {
         }
 
     }
+
     free(ndw);
     char **&ddw = pddw;
     for(i=0;i<level;i++)
@@ -165,7 +168,8 @@ int main() {
     	    	if(ddw[i][j]==1)
     	    	fprintf(fid,"%d\n",j+1);
     	    }
-    	    fclose(fid);
+    	fclose(fid);
     }
+
     return 0;
 }

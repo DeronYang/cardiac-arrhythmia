@@ -5,6 +5,8 @@
 #define LENGTH  7200
 #define POSI_LENGTH 2067
 #define SAMP_FREQUENCY 360
+double max4parts(double *data, int len);
+double min4parts(double *data, int len);
 int main() {
 
 	int i, j;
@@ -92,6 +94,9 @@ int main() {
 //    		printf("(%d,%d) %f\n",i+1,j+25, swd[i][j+24]);
     	}
     }
+    for(i=0;i<level;i++)
+    	free(swa[i]);
+    free(swa);
     char *pdw = (char *)malloc((points-1) * sizeof(char));
     char **pddw = (char **)malloc(level * sizeof(char *));
     for(i = 0; i < level; i++)
@@ -159,17 +164,95 @@ int main() {
     }
     free(nddw);
 
-    const char *fp_ddw[4] = {"ddw1.log","ddw2.log","ddw3.log","ddw4.log",};
-    for(i=0;i<4;i++)
+    double **&wpeak = swd;
+    for(i=0;i<level;i++)
+    	for(j=0;j<points;j++)
+    		wpeak[i][j] = ddw[i][j] * swd[i][j];
+
+    for(i=0;i<level;i++)
     {
-    	fid = fopen(fp_ddw[i],"w+");
-    	    for(j=0;j<points;j++)
-    	    {
-    	    	if(ddw[i][j]==1)
-    	    	fprintf(fid,"%d\n",j+1);
-    	    }
-    	fclose(fid);
+    	wpeak[i][0] += 1e-10;
+    	wpeak[i][points-1]  += 1e-10;
     }
 
+
+    for(i=0;i<level;i++)
+    {
+        free(ddw[i]);
+    }
+    free(ddw);
+
+    const double *Mj4 = wpeak[2];
+    double *posi = (double *)malloc(points * sizeof(double));
+    double *nega = (double *)malloc(points * sizeof(double));
+    memset(posi,0,points * sizeof(double));
+    memset(nega,0,points * sizeof(double));
+    for(i = 0; i < points; i++)
+    {
+    	if(Mj4[i] > 0)
+    		posi[i] = Mj4[i];
+    	else
+    		nega[i] = Mj4[i];
+    }
+    double thposi = max4parts(posi, points);
+    double thnega = min4parts(nega, points);
+
+
+//    printf("thposi:%lf\nthnega:%lf\n",thposi,thnega);
+//    const char *fp_wpeak[4] = {"wpeak1.log","wpeak2.log","wpeak3.log","wpeak4.log",};
+//    for(i=0;i<4;i++)
+//    {
+//    	fid = fopen(fp_wpeak[i],"w+");
+//    	    for(j=0;j<points;j++)
+//    	    {
+//    	    	fprintf(fid,"%f\n",wpeak[i][j]);
+//    	    }
+//    	fclose(fid);
+//    }
+
     return 0;
+}
+double max(double *data, int len)
+{
+	double max = 0;
+	if(data == NULL || len <= 0)
+			return max;
+	max = data[0];
+	for(int i=1;i<len;i++)
+	{
+		if(data[i]>max)
+			max = data[i];
+	}
+	return max;
+}
+double max4parts(double *data, int len)
+{
+	double result = 0;
+	if(data == NULL || len <= 0)
+		return result;
+
+	result = (max(data,len/4) + max( data+(len/4), (len/4) ) + max( data+2*(len/4), (len/4) ) + max( data+3*(len/4), len-3*(len/4) ))/4;
+	return result;
+}
+double min(double *data, int len)
+{
+	double min = 0;
+	if(data == NULL || len <= 0)
+			return min;
+	min = data[0];
+	for(int i=1;i<len;i++)
+	{
+		if(data[i]<min)
+			min = data[i];
+	}
+	return min;
+}
+double min4parts(double *data, int len)
+{
+	double result = 0;
+	if(data == NULL || len <= 0)
+		return result;
+
+	result = (min(data,len/4) + min( data+(len/4), (len/4) ) + min( data+2*(len/4), (len/4) ) + min( data+3*(len/4), len-3*(len/4) ))/4;
+	return result;
 }

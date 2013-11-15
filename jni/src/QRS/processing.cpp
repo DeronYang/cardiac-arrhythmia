@@ -7,6 +7,7 @@
 #define SAMP_FREQUENCY 360
 double max4parts(double *data, int len);
 double min4parts(double *data, int len);
+/////http://www.iqiyi.com/v_19rrhfwlf8.html?share_sTime=0-share_eTime=83
 int main() {
 
 	int i, j;
@@ -196,6 +197,69 @@ int main() {
     }
     double thposi = max4parts(posi, points);
     double thnega = min4parts(nega, points);
+    free(posi);
+    free(nega);
+    const double thposi_3 = thposi / 3;
+    const double thnega_4 = thnega / 4;
+
+    char *interva = (char *)malloc(points * sizeof(char));
+    char *cp_posi = (char *)malloc(points * sizeof(char));
+    char *cp_nega = (char *)malloc(points * sizeof(char));
+    memset(interva, 0, points * sizeof(char));
+    memset(cp_posi, 0, points * sizeof(char));
+    memset(cp_nega, 0, points * sizeof(char));
+    int loca_len = 0;
+    for(i=0;i<points;i++)
+    {
+        if(posi[i] > thposi_3)
+        {
+            cp_posi[i] = 1;
+            loca_len++;
+        }
+        if(nega[i] < thnega_4)
+        {
+            cp_nega[i] = -1;
+            loca_len++;
+        }
+        interva[i] = cp_posi[i] + cp_nega[i];
+    }
+    free(cp_posi);
+    free(cp_nega);
+    int *loca = (int *)malloc(loca_len * sizeof(int));
+
+    //loca 结果与matlab差1
+    for(i=0,j=0;i<points;i++)
+    {
+        if(interva[i] !=0){
+            loca[j] = i;
+            j++;
+        }
+    }
+
+    char *diff = (char *)malloc((loca_len-1) * sizeof(char));
+
+    int loca2_len = 0;
+    for(i=0;i<loca_len-1;i++)
+    {
+        if(loca[i] - loca[i+1] < 80 && loca[i] - loca[i+1] > -80)
+        {
+            diff[i] = interva[loca[i]] - interva[loca[i+1]];
+            if(diff[i] == -2)
+                loca2_len++;
+        }
+        else
+            diff[i] = 0;
+    }
+    int *loca2 = (int *)malloc(loca2_len * sizeof(int));
+    for(i=0,j=0;i<loca_len-1;i++)
+    {
+        if(diff[i] == -2)
+        {
+            loca2[j] = i;
+            j++;
+        }
+
+    }
 
 
 //    printf("thposi:%lf\nthnega:%lf\n",thposi,thnega);

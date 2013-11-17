@@ -167,10 +167,10 @@ while i<points
 %R波极大值点
        R_result(j)=mark3-10;
        count(mark3-10)=300;
-  i=i+60;
-  j=j+1;
-  Rnum=Rnum+1;
- end
+    i=i+60;
+    j=j+1;
+    Rnum=Rnum+1;
+    end
 i=i+1;
 end
 %************************删除多检点，补偿漏检点**************************%
@@ -183,16 +183,16 @@ while(num2~=0)
    R_R=R(2:length(R))-R(1:length(R)-1);
    RRmean=mean(R_R);
 %当两个R波间隔小于0.4RRmean时,去掉值小的R波
-for i=2:length(R)
-    if (R(i)-R(i-1))<=0.4*RRmean
-        num2=num2+1;
-        if signal(R(i))>signal(R(i-1))
-            count(R(i-1))=0;
-        else
-            count(R(i))=0;
+    for i=2:length(R)
+        if (R(i)-R(i-1))<=0.4*RRmean
+            num2=num2+1;
+            if signal(R(i))>signal(R(i-1))
+                count(R(i-1))=0;
+            else
+                count(R(i))=0;
+            end
         end
     end
-end
 end
 
 num1=2;

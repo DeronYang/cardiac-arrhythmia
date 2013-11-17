@@ -18,6 +18,7 @@ class IntList
 		~IntList();
 		void insert(int data);
 		const ListNode *getHead();
+		const ListNode *getTail();
 		int getLength();
 };
 

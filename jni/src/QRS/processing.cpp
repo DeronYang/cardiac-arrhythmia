@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "filter.h"
-#include "../extract/median.h"
+#include "../function/filter.h"
+#include "../function/median.h"
+#include "../data/int_list.h"
 #define LENGTH  7200
 #define POSI_LENGTH 2067
 #define SAMP_FREQUENCY 360
@@ -9,6 +10,8 @@ double max4parts(double *data, int len);
 double min4parts(double *data, int len);
 double abs(double num);
 int round(double num);
+double mean(int *data, int n);
+
 int main() {
 
 	int i, j;
@@ -273,6 +276,92 @@ int main() {
     memcpy(intervaqs, interva2+10,points - 10);
 
 
+
+    int mark1,mark2,mark3;
+    IntList R_result;
+    i = 0;
+    j = 0;
+    int Rnum = 0;
+    while(i<points-1)
+    {
+    	if(interva2[i]==-1)
+    	{
+    		mark1 = i;
+    		i++;
+    		while(i<points-1 && interva2[i]==0)
+    		{
+    			i++;
+    		}
+    		mark2 = i;
+    		mark3 = round( (abs(Mj4[mark2])*mark1 + abs(Mj4[mark1])*mark2) / (abs(Mj4[mark2]) + abs(Mj4[mark1])) );
+    		R_result.insert(mark3-10);
+    		//后面执行%count(mark3-10)=300;
+    		i = i+60;
+    		j = j+1;
+    		Rnum = Rnum + 1;
+    	}
+    	i = i+1;
+    }
+    //执行count赋值
+//    int count_len = R_result.getTail()->mData + 1;
+    int count_len = points;
+    int *count = (int *)malloc(count_len * sizeof(int));
+    memset(count, 0, sizeof(int) * count_len);
+    const ListNode *pCur = R_result.getHead();
+    int *R_R;
+    double RRmean;
+    while(pCur != NULL)
+    {
+    	count[pCur->mData] = 300;
+    	pCur = pCur->pNext;
+    }
+
+    int num2 = 1;
+    while(num2 != 0)
+    {
+    	num2 = 0;
+    	IntList R;
+    	for(i=0;i<count_len;i++)
+    	{
+    		if(count[i] != 0)
+    			R.insert(i);
+    	}
+    	int RR_len = R.getLength() - 1;
+    	R_R = (int *)malloc(RR_len * sizeof(int));
+    	pCur = R.getHead();
+    	for(i=0;i<RR_len;i++)
+    	{
+    		R_R[i] = pCur->pNext->mData - pCur->mData;
+    		pCur = pCur->pNext;
+    	}
+    	RRmean = mean(R_R, RR_len);
+    	free(R_R);
+    	pCur = R.getHead();
+    	while(pCur->pNext != NULL)
+    	{
+    		if(pCur->pNext->mData - pCur->mData <= 0.4*RRmean)
+    		{
+    			num2 = num2 + 1;
+    			if(signal[pCur->pNext->mData] > signal[pCur->mData])
+    				count[pCur->mData] = 0;
+    			else
+    				count[pCur->pNext->mData] = 0;
+    		}
+    		pCur = pCur->pNext;
+    	}
+    }
+
+    int num1 = 2;
+    while(num1>0)
+    {
+    	num1 = num1 - 1;
+    	IntList R;
+    	for(i=0;i<count_len;i++)
+    	{
+    	    if(count[i] != 0)
+    	    	R.insert(i);
+    	}
+    }
 //    printf("thposi:%lf\nthnega:%lf\n",thposi,thnega);
 //    const char *fp_wpeak[4] = {"wpeak1.log","wpeak2.log","wpeak3.log","wpeak4.log",};
 //    for(i=0;i<4;i++)
@@ -342,4 +431,16 @@ double abs(double num)
 int round(double num)
 {
 	return (int) (num + 0.5);
+}
+
+double mean(int *data, int n)
+{
+	double rt = 0;
+	if(data ==NULL || n<1)
+		return rt;
+	int sum = 0;
+	for(int i = 0;i<n;i++)
+		sum += data[i];
+	return ((double) sum) / n;
+
 }

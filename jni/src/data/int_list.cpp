@@ -1,3 +1,6 @@
+#include "int_list.h"
+#include <stdio.h>
+#include <stdlib.h>
 IntList::IntList()
 {
 	//哑节点
@@ -33,6 +36,11 @@ void IntList::insert(int data)
 const ListNode *IntList::getHead()
 {
 	return pHead->pNext;
+}
+
+const ListNode *IntList::getTail()
+{
+	return pTail;
 }
 
 int IntList::getLength()

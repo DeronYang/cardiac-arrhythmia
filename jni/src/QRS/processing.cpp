@@ -7,7 +7,8 @@
 #define SAMP_FREQUENCY 360
 double max4parts(double *data, int len);
 double min4parts(double *data, int len);
-/////http://www.iqiyi.com/v_19rrhfwlf8.html?share_sTime=0-share_eTime=83
+double abs(double num);
+int round(double num);
 int main() {
 
 	int i, j;
@@ -260,6 +261,16 @@ int main() {
         }
 
     }
+    char *interva2 = (char *)malloc(points * sizeof(char));
+    memset(interva2, 0, points * sizeof(char));
+    for(i=0;i<loca2_len;i++)
+    {
+    	interva2[loca[loca2[i]]] = interva[loca[loca2[i]]];
+    	interva2[loca[loca2[i]+1]] = interva[loca[loca2[i]+1]];
+    }
+    char *intervaqs = (char *)malloc(points * sizeof(char));
+    memset(intervaqs, 0, points * sizeof(char));
+    memcpy(intervaqs, interva2+10,points - 10);
 
 
 //    printf("thposi:%lf\nthnega:%lf\n",thposi,thnega);
@@ -319,4 +330,16 @@ double min4parts(double *data, int len)
 
 	result = (min(data,len/4) + min( data+(len/4), (len/4) ) + min( data+2*(len/4), (len/4) ) + min( data+3*(len/4), len-3*(len/4) ))/4;
 	return result;
+}
+
+double abs(double num)
+{
+	if(num<0)
+		num *= -1;
+	return num;
+}
+
+int round(double num)
+{
+	return (int) (num + 0.5);
 }

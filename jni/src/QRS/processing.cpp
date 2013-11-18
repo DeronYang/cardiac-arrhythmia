@@ -3,7 +3,6 @@
 #include "../function/filter.h"
 #include "../function/median.h"
 #include "../data/int_list.h"
-#define LENGTH  7200
 #define POSI_LENGTH 2067
 #define SAMP_FREQUENCY 360
 double max4parts(double *data, int len);
@@ -11,21 +10,46 @@ double min4parts(double *data, int len);
 double abs(double num);
 int round(double num);
 double mean(int *data, int n);
+/*
+ * input:sample data & length;
+ * output:QRS wave R position:
+ */
+void  processing(const double *input, int in_len, int *&output, int &out_len) {
 
-int main() {
+//	const char *fp_samp_path = "./orig_samp.log";
+//    FILE *fid = fopen(fp_samp_path, "rb");
+//    if (fid == NULL)
+//        return -1;
+//
+//    double *orig_samp = (double *) malloc(sizeof(double) * LENGTH);
+//    for (i = 0; i < LENGTH; i++) {
+//        fscanf(fid, "%lf", &orig_samp[i]);
+//    }
+//    fclose(fid);
+//    fid = NULL;
+    //    const char *fp_posi_path = "./orig_posi.log";
+    //    fid = fopen(fp_posi_path, "rb");
+    //    if (fid == NULL)
+    //      return -1;
+    //
+    //    int *orig_posi = (int *)malloc(sizeof(int) * POSI_LENGTH);
+    //    for (i = 0; i < POSI_LENGTH; i++) {
+    //            fscanf(fid, "%d", &orig_posi[i]);
+    //    }
+    //
+    //    double *rr_interval = (double *)malloc(sizeof(double) * POSI_LENGTH);
+    //
+    //    for(i = 0 ; i < POSI_LENGTH-1; i++)
+    //    {
+    //      rr_interval[i] = ((double)(orig_posi[i+1] - orig_posi[i])) / 360;
+    //    }
+    //    rr_interval[POSI_LENGTH - 1] = 0;
+    //    free(orig_posi);
+        //to do load labels
 
-	int i, j;
-	const char *fp_samp_path = "./orig_samp.log";
-    FILE *fid = fopen(fp_samp_path, "rb");
-    if (fid == NULL)
-        return -1;
-
-    double *orig_samp = (double *) malloc(sizeof(double) * LENGTH);
-    for (i = 0; i < LENGTH; i++) {
-        fscanf(fid, "%lf", &orig_samp[i]);
-    }
-    fclose(fid);
-    fid = NULL;
+    int i, j;
+    int LENGTH = in_len;
+    const double *orig_samp = input;
     double *median_flt_samp_200ms = medfilt1(orig_samp, LENGTH, 72);
     double *median_flt_samp_600ms = medfilt1(median_flt_samp_200ms, LENGTH,
             216);
@@ -36,7 +60,6 @@ int main() {
     {
     	Diff_samp[i] = orig_samp[i] - median_flt_samp_600ms[i];
     }
-    free(orig_samp);
 
     //cheby filter coef.get from matlab
     double b1[5] = {0.001730826067031, 0.006923304268125, 0.010384956402187, 0.006923304268125, 0.001730826067031};
@@ -46,32 +69,11 @@ int main() {
     filter(pre_data, NULL, b1, 5, a1, 5, Diff_samp, LENGTH, NULL);
     free(Diff_samp);
 
-
-    const char *fp_posi_path = "./orig_posi.log";
-    fid = fopen(fp_posi_path, "rb");
-    if (fid == NULL)
-    	return -1;
-
-    int *orig_posi = (int *)malloc(sizeof(int) * POSI_LENGTH);
-    for (i = 0; i < POSI_LENGTH; i++) {
-            fscanf(fid, "%d", &orig_posi[i]);
-    }
-
-    double *rr_interval = (double *)malloc(sizeof(double) * POSI_LENGTH);
-
-    for(i = 0 ; i < POSI_LENGTH-1; i++)
-    {
-    	rr_interval[i] = ((double)(orig_posi[i+1] - orig_posi[i])) / 360;
-    }
-    rr_interval[POSI_LENGTH - 1] = 0;
-    free(orig_posi);
-    //to do load labels
-
     //算小波系数和尺度系数
     int points = LENGTH;
     int level = 4;
     int sr = SAMP_FREQUENCY;
-    double *&signal = pre_data;
+    double *&signal = pre_data;//需要后面释放
     double **swa = (double **)malloc(sizeof(double *) * level);
     double **swd = (double **)malloc(sizeof(double *) * level);
     for(i = 0; i<level; i++)
@@ -169,7 +171,7 @@ int main() {
     }
     free(nddw);
 
-    double **&wpeak = swd;
+    double **&wpeak = swd;//需要后面释放
     for(i=0;i<level;i++)
     	for(j=0;j<points;j++)
     		wpeak[i][j] = ddw[i][j] * swd[i][j];
@@ -206,7 +208,7 @@ int main() {
     const double thposi_3 = thposi / 3;
     const double thnega_4 = thnega / 4;
 
-    char *interva = (char *)malloc(points * sizeof(char));
+    char *interva = (char *)malloc(points * sizeof(char));//需要释放
     char *cp_posi = (char *)malloc(points * sizeof(char));
     char *cp_nega = (char *)malloc(points * sizeof(char));
     memset(interva, 0, points * sizeof(char));
@@ -229,7 +231,7 @@ int main() {
     }
     free(cp_posi);
     free(cp_nega);
-    int *loca = (int *)malloc(loca_len * sizeof(int));
+    int *loca = (int *)malloc(loca_len * sizeof(int));//需要释放
 
     //loca 结果与matlab差1
     for(i=0,j=0;i<points;i++)
@@ -240,7 +242,7 @@ int main() {
         }
     }
 
-    char *diff = (char *)malloc((loca_len-1) * sizeof(char));
+    char *diff = (char *)malloc((loca_len-1) * sizeof(char));//需要释放
 
     int loca2_len = 0;
     for(i=0;i<loca_len-1;i++)
@@ -254,7 +256,7 @@ int main() {
         else
             diff[i] = 0;
     }
-    int *loca2 = (int *)malloc(loca2_len * sizeof(int));
+    int *loca2 = (int *)malloc(loca2_len * sizeof(int));//需要释放
     for(i=0,j=0;i<loca_len-1;i++)
     {
         if(diff[i] == -2)
@@ -264,24 +266,23 @@ int main() {
         }
 
     }
-    char *interva2 = (char *)malloc(points * sizeof(char));
+    char *interva2 = (char *)malloc(points * sizeof(char));//需要释放
     memset(interva2, 0, points * sizeof(char));
     for(i=0;i<loca2_len;i++)
     {
     	interva2[loca[loca2[i]]] = interva[loca[loca2[i]]];
     	interva2[loca[loca2[i]+1]] = interva[loca[loca2[i]+1]];
     }
-    char *intervaqs = (char *)malloc(points * sizeof(char));
-    memset(intervaqs, 0, points * sizeof(char));
-    memcpy(intervaqs, interva2+10,points - 10);
 
-
+//    char *intervaqs = (char *)malloc(points * sizeof(char));
+//    memset(intervaqs, 0, points * sizeof(char));
+//    memcpy(intervaqs, interva2+10,points - 10);
 
     int mark1,mark2,mark3;
     IntList R_result;
     i = 0;
     j = 0;
-    int Rnum = 0;
+//    int Rnum = 0;
     while(i<points-1)
     {
     	if(interva2[i]==-1)
@@ -294,74 +295,118 @@ int main() {
     		}
     		mark2 = i;
     		mark3 = round( (abs(Mj4[mark2])*mark1 + abs(Mj4[mark1])*mark2) / (abs(Mj4[mark2]) + abs(Mj4[mark1])) );
-    		R_result.insert(mark3-10);
+    		R_result.insert(mark3-15);
     		//后面执行%count(mark3-10)=300;
     		i = i+60;
     		j = j+1;
-    		Rnum = Rnum + 1;
+//    		Rnum = Rnum + 1;
     	}
     	i = i+1;
     }
+
+
+    //给结果赋值
+    out_len = R_result.getLength();
+    output = (int *)malloc(out_len * sizeof(int));
+    pCur = R_result.getHead();
+    for(i=0;i<out_len;i++)
+    {
+        output[i] = pCur->mData;
+        pCur = pCur->pNext;
+    }
+
+    free(signal);
+    for(i=0;i<level;i++)
+        free(wpeak[i]);
+    free(pweak);
+    free(interva);
+    free(loca);
+    free(diff);
+    free(loca2);
+    free(interva2);
     //执行count赋值
 //    int count_len = R_result.getTail()->mData + 1;
-    int count_len = points;
-    int *count = (int *)malloc(count_len * sizeof(int));
-    memset(count, 0, sizeof(int) * count_len);
-    const ListNode *pCur = R_result.getHead();
-    int *R_R;
-    double RRmean;
-    while(pCur != NULL)
-    {
-    	count[pCur->mData] = 300;
-    	pCur = pCur->pNext;
-    }
+//    int count_len = points;
+//    int *count = (int *)malloc(count_len * sizeof(int));
+//    memset(count, 0, sizeof(int) * count_len);
+//    const ListNode *pCur = R_result.getHead();
+//    int *R_R;
+//    double RRmean;
+//    while(pCur != NULL)
+//    {
+//    	count[pCur->mData] = 300;
+//    	pCur = pCur->pNext;
+//    }
+//
+//    int num2 = 1;
+//    while(num2 != 0)
+//    {
+//    	num2 = 0;
+//    	IntList R;
+//    	for(i=0;i<count_len;i++)
+//    	{
+//    		if(count[i] != 0)
+//    			R.insert(i);
+//    	}
+//    	int RR_len = R.getLength() - 1;
+//    	R_R = (int *)malloc(RR_len * sizeof(int));
+//    	pCur = R.getHead();
+//    	for(i=0;i<RR_len;i++)
+//    	{
+//    		R_R[i] = pCur->pNext->mData - pCur->mData;
+//    		pCur = pCur->pNext;
+//    	}
+//    	RRmean = mean(R_R, RR_len);
+//    	free(R_R);
+//    	pCur = R.getHead();
+//    	while(pCur->pNext != NULL)
+//    	{
+//    		if(pCur->pNext->mData - pCur->mData <= 0.4*RRmean)
+//    		{
+//    			num2 = num2 + 1;
+//    			if(signal[pCur->pNext->mData] > signal[pCur->mData])
+//    				count[pCur->mData] = 0;
+//    			else
+//    				count[pCur->pNext->mData] = 0;
+//    		}
+//    		pCur = pCur->pNext;
+//    	}
+//    }
 
-    int num2 = 1;
-    while(num2 != 0)
-    {
-    	num2 = 0;
-    	IntList R;
-    	for(i=0;i<count_len;i++)
-    	{
-    		if(count[i] != 0)
-    			R.insert(i);
-    	}
-    	int RR_len = R.getLength() - 1;
-    	R_R = (int *)malloc(RR_len * sizeof(int));
-    	pCur = R.getHead();
-    	for(i=0;i<RR_len;i++)
-    	{
-    		R_R[i] = pCur->pNext->mData - pCur->mData;
-    		pCur = pCur->pNext;
-    	}
-    	RRmean = mean(R_R, RR_len);
-    	free(R_R);
-    	pCur = R.getHead();
-    	while(pCur->pNext != NULL)
-    	{
-    		if(pCur->pNext->mData - pCur->mData <= 0.4*RRmean)
-    		{
-    			num2 = num2 + 1;
-    			if(signal[pCur->pNext->mData] > signal[pCur->mData])
-    				count[pCur->mData] = 0;
-    			else
-    				count[pCur->pNext->mData] = 0;
-    		}
-    		pCur = pCur->pNext;
-    	}
-    }
-
-    int num1 = 2;
-    while(num1>0)
-    {
-    	num1 = num1 - 1;
-    	IntList R;
-    	for(i=0;i<count_len;i++)
-    	{
-    	    if(count[i] != 0)
-    	    	R.insert(i);
-    	}
-    }
+//    int num1 = 2;
+//    while(num1>0)
+//    {
+//    	num1 = num1 - 1;
+//    	IntList R;
+//    	for(i=0;i<count_len;i++)
+//    	{
+//    	    if(count[i] != 0)
+//    	    	R.insert(i);
+//    	}
+//    	int RR_len = R.getLength()-1;
+//    	int *R_R = (int *)malloc(RR_len * sizeof(int));
+//    	pCur = R.getHead();
+//    	for(i=0;i<RR_len;i++)
+//    	{
+//    	    R_R[i] = pCur->pNext->mData - pCur->mData;
+//    	    pCur = pCur->pNext;
+//    	}
+//    	RRmean = mean(R_R, RR_len);
+//    	free(R_R);
+//    	pCur = R.getHead();
+//    	while(pCur->pNext != NULL)
+//    	{
+//    	    if(pCur->pNext->mData - pCur->mData > 1.6*RRmean)
+//    	    {
+//    	        num2 = num2 + 1;
+//    	        if(signal[pCur->pNext->mData] > signal[pCur->mData])
+//    	            count[pCur->mData] = 0;
+//    	        else
+//    	            count[pCur->pNext->mData] = 0;
+//    	    }
+//    	    pCur = pCur->pNext;
+//    	}
+//    }
 //    printf("thposi:%lf\nthnega:%lf\n",thposi,thnega);
 //    const char *fp_wpeak[4] = {"wpeak1.log","wpeak2.log","wpeak3.log","wpeak4.log",};
 //    for(i=0;i<4;i++)
@@ -373,8 +418,6 @@ int main() {
 //    	    }
 //    	fclose(fid);
 //    }
-
-    return 0;
 }
 double max(double *data, int len)
 {

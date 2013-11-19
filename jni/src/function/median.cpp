@@ -32,15 +32,6 @@ double *medianFilter(double *input, int nInLength, int nRadius)
 		}
 
 		memcpy(window + j, input + i - nRadius + j, (nWinLength - j - kk) * sizeof(double));
-		if(i==64)
-		{
-		    printf("j %d\n",j);
-		    printf("kk %d\n",kk);
-		    for(int z = 0; z<nWinLength;z++)
-		    {
-		        printf("%d : %f\n",z+1,window[z]);
-		    }
-		}
 		output[i] = median(window, nWinLength);
 	}
 	free(window);

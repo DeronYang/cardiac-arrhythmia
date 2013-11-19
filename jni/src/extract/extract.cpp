@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../function/median.h"
+#include "../function/convolution.h"
 double fir_coeff[12] = { -0.001148116470011, 0.004745771476303,
         0.030661636841520, 0.088238325775048, 0.162261360095697,
         0.215241022281443, 0.215241022281443, 0.162261360095697,
@@ -24,15 +25,28 @@ int main() {
         fscanf(fid, "%lf", &samp_pre[i]);
     }
     double *samp_med1 = medianFilter(samp_pre, samp_len, 36);
+    double *samp_med2 = medianFilter(samp_med1, samp_len, 108);
 //    for(i=0;i<100;i++)
 //    {
 //        printf("%d : %f\n",i+1,samp_med1[i]);
 //    }
-//    double *samp_med2 = medianFilter(samp_med1, samp_len, 108);
-//    double *&samp_cor = samp_med1;
-//    for (i = 0; i < 100; i++) {
-//        samp_cor[i] = samp_pre[i] - samp_med2[i];
+    double *&samp_cor = samp_med1;//need free
+    for (i = 0; i < 100; i++) {
+        samp_cor[i] = samp_pre[i] - samp_med2[i];
 //        printf("%d : %lf\n", i+1,samp_cor[i]);
-//    }
+    }
+    free(samp_pre);
+    free(samp_med2);
+
+    double *tmp = conv(samp_cor, samp_len, fir_coeff, 12);//不需要释放；
+    double *&samp_filt = tmp;
+    for(i=0;i<100;i++)
+       {
+           printf("%d : %f\n",i+1,samp_filt[i]);
+       }
+    free(samp_cor);
+
+
+
     return 0;
 }

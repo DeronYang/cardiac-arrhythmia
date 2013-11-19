@@ -97,8 +97,6 @@ for file_ix = 1:length(files)
 %                      DataMtx(rec_ix,:) = [feature(rec_ix).preRR feature(rec_ix).postRR feature(rec_ix).localAvgRR...
 %                          feature(rec_ix).morphQRS
 %                          feature(rec_ix).morphT];
-
-
     end
     save(strcat(data_dir,'/data_',int2str(files(file_ix))),'DataMtx','label');
 end

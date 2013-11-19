@@ -23,3 +23,7 @@ m
 
 # Vim temp file
 *.swp
+
+#ignore these files 
+*.exe
+*.obj

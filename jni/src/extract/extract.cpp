@@ -3,6 +3,7 @@
 //created by matlab
 #include <stdio.h>
 #include <stdlib.h>
+#include "../QRS/processing.h"
 #include "../function/median.h"
 #include "../function/convolution.h"
 double fir_coeff[12] = { -0.001148116470011, 0.004745771476303,
@@ -24,6 +25,16 @@ int main() {
     {
         fscanf(fid, "%lf", &samp_pre[i]);
     }
+
+    int *R_result = NULL;
+    int R_len = 0;
+    processing(samp_pre, samp_len, R_result, R_len);
+
+    printf("%d\n", R_len);
+
+
+
+
     double *samp_med1 = medianFilter(samp_pre, samp_len, 36);
     double *samp_med2 = medianFilter(samp_med1, samp_len, 108);
 //    for(i=0;i<100;i++)

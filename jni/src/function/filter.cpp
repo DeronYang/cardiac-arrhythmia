@@ -1,7 +1,6 @@
 #include "filter.h"
 #include <stdio.h>
 #include <stdlib.h>
-
 void filter(double y[], double zf[], double b[], int lenB, double a[], int lenA,
         const double x[], int lenX, const double zi[]) {
     int i, j;

@@ -14,7 +14,7 @@ double mean(int *data, int n);
  * input:sample data & length;
  * output:QRS wave R position:
  */
-void  processing(const double *input, int in_len, int *&output, int &out_len) {
+void  processing(double *input, int in_len, int *&output, int &out_len) {
 
 //	const char *fp_samp_path = "./orig_samp.log";
 //    FILE *fid = fopen(fp_samp_path, "rb");
@@ -49,7 +49,7 @@ void  processing(const double *input, int in_len, int *&output, int &out_len) {
 
     int i, j;
     int LENGTH = in_len;
-    const double *orig_samp = input;
+    double *orig_samp = input;
     double *median_flt_samp_200ms = medfilt1(orig_samp, LENGTH, 72);
     double *median_flt_samp_600ms = medfilt1(median_flt_samp_200ms, LENGTH,
             216);
@@ -308,7 +308,7 @@ void  processing(const double *input, int in_len, int *&output, int &out_len) {
     //给结果赋值
     out_len = R_result.getLength();
     output = (int *)malloc(out_len * sizeof(int));
-    pCur = R_result.getHead();
+    const ListNode *pCur = R_result.getHead();
     for(i=0;i<out_len;i++)
     {
         output[i] = pCur->mData;
@@ -318,7 +318,7 @@ void  processing(const double *input, int in_len, int *&output, int &out_len) {
     free(signal);
     for(i=0;i<level;i++)
         free(wpeak[i]);
-    free(pweak);
+    free(wpeak);
     free(interva);
     free(loca);
     free(diff);

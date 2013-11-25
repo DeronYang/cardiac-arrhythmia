@@ -16,8 +16,8 @@ for file_ix = 1:length(files)
     load ann105.mat;
     offset = samp_pre(1,1)-1;
     samp_pre = samp_pre(:,[2,3])';
-    samp_length = size(samp_pre,2);
-%     samp_length = 7200;
+%     samp_length = size(samp_pre,2);
+    samp_length = 7200;
     samp_pre = samp_pre(:,1:samp_length);
     ann_length = length(ann);
 
@@ -93,7 +93,7 @@ for file_ix = 1:length(files)
         
     % DataMtx
     DataMtx(rec_ix,:) = [feature(rec_ix).preRR feature(rec_ix).postRR  ...
-                         feature(rec_ix).morphQRS ];
+                         feature(rec_ix).morphQRS feature(rec_ix).morphT];
 %                      DataMtx(rec_ix,:) = [feature(rec_ix).preRR feature(rec_ix).postRR feature(rec_ix).localAvgRR...
 %                          feature(rec_ix).morphQRS
 %                          feature(rec_ix).morphT];
